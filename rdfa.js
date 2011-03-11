@@ -160,10 +160,9 @@ RDFA.prototype.labelArrow = function(path, label, offx, offy) {
 
 
 /* 
- * In what follows, we always start at the "to" state because drawArrowHead() depends on 
- * the path starting there (This is entirely because either it's not possible or I 
- * haven't figured out how to get the point x amount of distance from the end of the 
- * path using Raphael, so we just switch it around.)
+ * We draw arrows starting at the "to" state and going to the "from" state because it is
+ * slightly more convenient for drawArrowHead (simply start at the beginning of the path
+ * instead of finding the length of the path and subtracting).
  */
 
 RDFA.prototype.selfArrow = function(st, orient, label, label_offx, label_offy) {

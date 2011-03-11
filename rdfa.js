@@ -151,6 +151,13 @@ RDFA.prototype.drawArrowHead = function(path) {
 };
 
 
+RDFA.prototype.labelArrow = function(path, label, offx, offy) {
+  var pathlen = path.getTotalLength();
+  var midpt = path.getPointAtLength(pathlen / 2);
+  this.paper.text(midpt.x+offx, midpt.y+offy, label);
+}
+
+
 
 /* 
  * In what follows, we always start at the "to" state because drawArrowHead() depends on 
@@ -159,7 +166,7 @@ RDFA.prototype.drawArrowHead = function(path) {
  * path using Raphael, so we just switch it around.)
  */
 
-RDFA.prototype.selfArrow = function(st, orient) {
+RDFA.prototype.selfArrow = function(st, orient, label, label_offx, label_offy) {
   var offrad_cos = this.off_circ * Math.cos(2*Math.PI/5);
   var offrad_sin = this.off_circ * Math.sin(2*Math.PI/5);
   var offbez_cos = 55 * Math.cos(2*Math.PI/5);
@@ -171,16 +178,18 @@ RDFA.prototype.selfArrow = function(st, orient) {
     offbez_sin *= -1;
   }
 
-  var path = r.path(this.format("M {0},{1}, C {2},{3} {4},{3} {5},{1}",
+  var path = this.paper.path(this.format("M {0},{1}, C {2},{3} {4},{3} {5},{1}",
     spos[st][0]-offrad_cos, spos[st][1]-offrad_sin, 
     spos[st][0]-offbez_cos, spos[st][1]-offbez_sin, 
     spos[st][0]+offbez_cos, spos[st][0]+offrad_cos)).attr(this.line_params);
 
-  this.drawArrowHead(path);  
+  this.drawArrowHead(path);
+
+  this.labelArrow(path, label, label_offx, label_offy);
 }
 
 
-RDFA.prototype.straightArrow = function(from, to, f_ang, t_ang) {
+RDFA.prototype.straightArrow = function(from, to, f_ang, t_ang, label, label_offx, label_offy) {
   var spos = this.spos;
 
   var from_off_cos = this.off_circ * Math.cos(f_ang);
@@ -194,6 +203,8 @@ RDFA.prototype.straightArrow = function(from, to, f_ang, t_ang) {
     spos[from][0]+from_off_cos, spos[from][1]-from_off_sin)).attr(this.line_params);
 
   this.drawArrowHead(path);
+
+  this.labelArrow(path, label, label_offx, label_offy);
 }
 
 
@@ -214,7 +225,7 @@ RDFA.prototype.initialArrow = function(to, ang, length) {
 }
 
 
-RDFA.prototype.curvedArrow = function(from, to, f_ang, t_ang, curve) {
+RDFA.prototype.curvedArrow = function(from, to, f_ang, t_ang, curve, label, label_offx, label_offy) {
   var spos = this.spos;
 
   var from_off_cos = this.off_circ*Math.cos(f_ang);
@@ -233,7 +244,9 @@ RDFA.prototype.curvedArrow = function(from, to, f_ang, t_ang, curve) {
     spos[from][0]+from_bez_cos, spos[from][1]-from_bez_sin,
     spos[from][0]+from_off_cos, spos[from][1]-from_off_sin)).attr(this.line_params);
 
-   this.drawArrowHead(path);
+  this.drawArrowHead(path);
+
+  this.labelArrow(path, label, label_offx, label_offy);
 }
 
 

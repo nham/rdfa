@@ -31,11 +31,6 @@ eiz.selfArrow(1, "t", "1", 0, -8);
 eiz.curvedArrow(0, 1, 5*Math.PI/36, 31*Math.PI/36, 50, "1", 0, -8);
 eiz.curvedArrow(1, 0, 41*Math.PI/36, 67*Math.PI/36, 50, "0", 0, 8);
 
-// Attach handlers
-document.getElementById('eizstep').onclick = stepdfa(eiz, "eiz");
-document.getElementById('eizreset').onclick = resetdfa(eiz, "eiz");
-document.getElementById('eizinput').onkeyup = inputdfa(eiz, "eiz");
-
 
 
 // 666 DFA
@@ -76,8 +71,3 @@ two.straightArrow(1, 3, Math.PI/4, 5*Math.PI/4, "6", -6, -6);
 two.straightArrow(4, 2, 5*Math.PI/4, Math.PI/4, "7", 6, 6);
 two.curvedArrow(2, 3, 13*Math.PI/36, 59*Math.PI/36, 40, "6", 8, 0);
 two.curvedArrow(3, 2, 49*Math.PI/36, 23*Math.PI/36, 40, "7", -8, 0);
-
-// Attach handlers
-document.getElementById('twostep').onclick = stepdfa(two, "two");
-document.getElementById('tworeset').onclick = resetdfa(two, "two");
-document.getElementById('twoinput').onkeyup = inputdfa(two, "two");

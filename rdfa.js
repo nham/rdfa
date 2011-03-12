@@ -37,6 +37,8 @@ var RDFA = function(stuff) {
   }
 
   this.drawTape(false);
+
+  this.attachHandlers();
 };
 
 
@@ -59,6 +61,15 @@ RDFA.prototype.buildAcceptArray = function(array, numstates) {
 
   return ret_arr;
 }
+
+
+
+RDFA.prototype.attachHandlers = function() {
+  document.getElementById(this.dfa_name+'step').onclick = this.step();
+  document.getElementById(this.dfa_name+'reset').onclick = this.reset();
+  document.getElementById(this.dfa_name+'input').onkeyup = this.changeInput();
+}
+
 
 
 
@@ -278,64 +289,66 @@ RDFA.prototype.curvedArrow = function(from, to, f_ang, t_ang, curve, label, labe
 
 
 
-
-var stepdfa = function(raphDFA, dfaName) {
+RDFA.prototype.step = function() {
+  var that = this;
   var func = function() {
-    var next_state = raphDFA.getNextState();
-    var prev_state = raphDFA.DFA.current;
+    var next_state = that.getNextState();
+    var prev_state = that.DFA.current;
 
-    raphDFA.DFA.current = next_state;
-    raphDFA.drawState(prev_state);
-    raphDFA.drawState(next_state);
+    that.DFA.current = next_state;
+    that.drawState(prev_state);
+    that.drawState(next_state);
 
-    raphDFA.tape.position += 1;
-    raphDFA.drawTape(false);
+    that.tape.position += 1;
+    that.drawTape(false);
 
     // disable step button if no more input    
-    if(raphDFA.tape.position === raphDFA.tape.input.length) {
-      document.getElementById(dfaName+'step').disabled = true;
+    if(that.tape.position === that.tape.input.length) {
+      document.getElementById(that.dfa_name+'step').disabled = true;
     }
   }
 
   return func;
 };
 
-var resetdfa = function(raphDFA, dfaName) {
+RDFA.prototype.reset = function() {
+  var that = this;
   var func = function() {
-    raphDFA.drawTape(true);
-    raphDFA.tape.position = 0;
-    raphDFA.DFA.current = raphDFA.DFA.initial;
+    that.drawTape(true);
+    that.tape.position = 0;
+    that.DFA.current = that.DFA.initial;
 
-    for(var i = 0; i < raphDFA.DFA.states; i += 1) {
-      raphDFA.drawState(i);
+    for(var i = 0; i < that.DFA.states; i += 1) {
+      that.drawState(i);
     }
 
-    document.getElementById(dfaName+'step').disabled = false;
+    document.getElementById(that.dfa_name+'step').disabled = false;
   }
 
   return func;
 };
 
 
-var inputdfa = function(raphDFA, dfaName) {
+RDFA.prototype.changeInput = function() {
+  var that = this;
   var func = function(event) {
     event = event || windows.event;
     if(event.keyCode === 13) {
-      var input_box = document.getElementById(dfaName+'input');
+      var input_box = document.getElementById(that.dfa_name+'input');
       var user_input = input_box.value;
       
       // validate user input before sending it to the DFA
       var isValid = true;
       for(var i = 0; i < user_input.length; i += 1) {
-        if(raphDFA.inAlphabet(user_input[i]) === false) {
+        if(that.inAlphabet(user_input[i]) === false) {
           isValid = false;
           i = user_input.length;
         }
       }
 
       if(isValid) {
-        raphDFA.tape.input = user_input;
-        resetdfa(raphDFA, dfaName)();
+        that.tape.input = user_input;
+        (that.reset())();
       } else {
         alert("Dear Sir or Madam: You have entered an invalid input symbol");
       }

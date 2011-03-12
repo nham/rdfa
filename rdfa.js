@@ -9,28 +9,56 @@ var RDFA = function(stuff) {
     alphabet: stuff.alphabet,
     transitions: stuff.transitions,
     initial: stuff.initial,
-    accepts: stuff.accepts,
+    accepts: this.buildAcceptArray(stuff.accepts, stuff.states),
     current: stuff.initial
   }
 
-  this.paper = stuff.paper;
+  this.dfa_name = stuff.dfa_name;
+  this.paper_width = stuff.width;
+  this.paper_height = stuff.height;
+
+  this.paper = Raphael(stuff.dfa_name, stuff.width, stuff.height);
+
   this.robjs = {
     "input-els": null,
     "state-circles": [],
     "state-text": [],
   };
+
   this.spos = stuff.spos;
   this.circ_rad = stuff.circ_rad;
   this.off_circ = stuff.circ_rad + 3; // Hacky, fix this.
   this.line_params = stuff.line_params;
-  this.tape_width = stuff.tape_width;
+
 
   // Initial draw of states
   for(var i = 0; i < this.DFA.states; i += 1) {
     this.drawState(i);
   }
 
+  this.drawTape(false);
 };
+
+
+// Attempts to describe this abstractly all sound like gibberish, so here's an example:
+// buildAcceptArray([3, 5], 6) returns [false, false, false, true, false, true]
+// i.e. the array parameter is zero-indexed
+RDFA.prototype.buildAcceptArray = function(array, numstates) {
+  array.sort(function(a, b) { return (a - b); });
+
+  var ret_arr = [];
+  var j = 0;
+  for(var i = 0; i < numstates; i += 1) {
+    if(j < array.length && i === array[j]) {
+      ret_arr.push(true);
+      j += 1;
+    } else {
+      ret_arr.push(false);
+    }
+  }
+
+  return ret_arr;
+}
 
 
 
@@ -61,7 +89,7 @@ RDFA.prototype.inAlphabet = function(symbol) {
 
 
 RDFA.prototype.drawTape = function(reset) {
-  var xstart = this.tape_width / 2 + 0.5;
+  var xstart = this.paper_width / 2 + 0.5;
   var ystart = 10.5;
   var tape_space = 12;
 
@@ -69,8 +97,8 @@ RDFA.prototype.drawTape = function(reset) {
   this.paper.rect(xstart-6, ystart-8, 12, 16);
   var textx = xstart + tape_space;
 
-  this.paper.path(this.format("M 0 {0} L {1} {0}", ystart-8, this.tape_width));
-  this.paper.path(this.format("M 0 {0} L {1} {0}", ystart+8, this.tape_width));
+  this.paper.path(this.format("M 0 {0} L {1} {0}", ystart-8, this.paper_width));
+  this.paper.path(this.format("M 0 {0} L {1} {0}", ystart+8, this.paper_width));
 
   if(this.robjs['tape-els'] !== undefined && !reset) {
     this.robjs['tape-els'].translate(-1*tape_space, 0);
@@ -165,11 +193,11 @@ RDFA.prototype.labelArrow = function(path, label, offx, offy) {
  * instead of finding the length of the path and subtracting).
  */
 
-RDFA.prototype.selfArrow = function(st, orient, label, label_offx, label_offy) {
+RDFA.prototype.selfArrow = function(st, orient, length, label, label_offx, label_offy) {
   var offrad_cos = this.off_circ * Math.cos(2*Math.PI/5);
   var offrad_sin = this.off_circ * Math.sin(2*Math.PI/5);
-  var offbez_cos = 55 * Math.cos(2*Math.PI/5);
-  var offbez_sin = 55 * Math.sin(2*Math.PI/5);
+  var offbez_cos = length * Math.cos(2*Math.PI/5);
+  var offbez_sin = length * Math.sin(2*Math.PI/5);
   var spos = this.spos;
 
   if(orient === "b") {

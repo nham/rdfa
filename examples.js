@@ -11,13 +11,14 @@ eizDFA = {
   transitions: [{'0': 0, '1': 1}, 
                 {'0': 0, '1': 1}],
   initial: 0,
-  accepts: [true, false],
-   
-  paper: Raphael("eiz", 270, 125),
+  accepts: [0],
+  
+  dfa_name: "dfa1",
+  width: 270,
+  height: 125,
 
   spos: [[70, 90], [200, 90]],
   circ_rad: circ_rad,
-  tape_width: 270,
   line_params: {"stroke-width": 2}
 }
 
@@ -29,8 +30,6 @@ eiz.selfArrow(0, "t", "0", 0, -8);
 eiz.selfArrow(1, "t", "1", 0, -8);
 eiz.curvedArrow(0, 1, 5*Math.PI/36, 31*Math.PI/36, 50, "1", 0, -8);
 eiz.curvedArrow(1, 0, 41*Math.PI/36, 67*Math.PI/36, 50, "0", 0, 8);
-
-eiz.drawTape(false);
 
 // Attach handlers
 document.getElementById('eizstep').onclick = stepdfa(eiz, "eiz");
@@ -51,13 +50,14 @@ twoDFA = {
                 {'7': 2, '6': 5},
                 {'7': 5, '6': 5}],
   initial: 0,
-  accepts: [false, true, false, false, false, true],
-   
-  paper: Raphael("two", 450, 250),
+  accepts: [1, 5],
 
+  dfa_name: "two",
+  width: 450,
+  height: 250,
+   
   spos: [[60, 90], [60, 180], [170, 180], [170, 90], [280, 90], [390, 90]],
   circ_rad: circ_rad,
-  tape_width: 450,
   line_params: {"stroke-width": 2}
 }
 
@@ -76,8 +76,6 @@ two.straightArrow(1, 3, Math.PI/4, 5*Math.PI/4, "6", -6, -6);
 two.straightArrow(4, 2, 5*Math.PI/4, Math.PI/4, "7", 6, 6);
 two.curvedArrow(2, 3, 13*Math.PI/36, 59*Math.PI/36, 40, "6", 8, 0);
 two.curvedArrow(3, 2, 49*Math.PI/36, 23*Math.PI/36, 40, "7", -8, 0);
-
-two.drawTape(false);
 
 // Attach handlers
 document.getElementById('twostep').onclick = stepdfa(two, "two");
